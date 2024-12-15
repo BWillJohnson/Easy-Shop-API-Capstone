@@ -67,7 +67,7 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
     @Override
     public Category create(Category category)
     {
-        String createCategoryQuery = "INSERT INTO Category(name, description )";
+        String createCategoryQuery = "INSERT INTO Categories(name, description )";
 
         try (Connection connect = getConnection();
         PreparedStatement createStatement = connect.prepareStatement(createCategoryQuery)){
@@ -81,13 +81,30 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
         }catch (Exception e){
             e.printStackTrace();
         }
-        return null;
+        return category;
     }
 
     @Override
-    public void update(int categoryId, Category category)
-    {
-        // update category
+    public void update(int categoryId, Category category) {
+        String updateQuery = "UPDATE categories SET name = ?, description = ? WHERE category_id = ?";
+
+        try(Connection connect  = getConnection();
+        PreparedStatement updateStatement = connect.prepareStatement(updateQuery)) {
+
+            updateStatement.setString(1,category.getName());
+            updateStatement.setString(2,category.getDescription());
+            updateStatement.setInt(3,categoryId);
+
+            int rows = updateStatement.executeUpdate();
+
+            if (rows == 0) {
+                throw new SQLException("Update failed, no rows affected!");
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
     @Override
