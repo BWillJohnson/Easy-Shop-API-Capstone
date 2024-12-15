@@ -1,6 +1,7 @@
 package org.yearup.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.yearup.data.CategoryDao;
 import org.yearup.data.ProductDao;
@@ -9,10 +10,9 @@ import org.yearup.models.Product;
 
 import java.util.List;
 
-@CrossOrigin
-
 @RestController
-@RequestMapping
+@CrossOrigin
+@RequestMapping("categories")
 public class CategoriesController {
 
     private final CategoryDao categoryDao;
@@ -23,9 +23,9 @@ public class CategoriesController {
         this.categoryDao = categoryDao;
         this.productDao = productDao;
     }
-    // create an Autowired controller to inject the categoryDao and ProductDao
 
-    // add the appropriate annotation for a get action
+   @PreAuthorize("permitAll()")
+   @GetMapping("")
     public List<Category> getAll()
     {
         // find and return all categories
@@ -49,7 +49,8 @@ public class CategoriesController {
     }
 
     // add annotation to call this method for a POST action
-    // add annotation to ensure that only an ADMIN can call this function
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("admin")
     public Category addCategory(@RequestBody Category category)
     {
         // insert the category
@@ -57,7 +58,8 @@ public class CategoriesController {
     }
 
     // add annotation to call this method for a PUT (update) action - the url path must include the categoryId
-    // add annotation to ensure that only an ADMIN can call this function
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("admin")
     public void updateCategory(@PathVariable int id, @RequestBody Category category)
     {
         // update the category by id
@@ -65,7 +67,8 @@ public class CategoriesController {
 
 
     // add annotation to call this method for a DELETE action - the url path must include the categoryId
-    // add annotation to ensure that only an ADMIN can call this function
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("admin")
     public void deleteCategory(@PathVariable int id)
     {
         // delete the category by id
