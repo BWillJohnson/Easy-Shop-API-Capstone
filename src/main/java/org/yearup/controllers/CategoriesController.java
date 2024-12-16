@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
-@RequestMapping("categories")
+@RequestMapping(path = "/categories")
 public class CategoriesController {
 
     private final CategoryDao categoryDao;
@@ -26,38 +26,37 @@ public class CategoriesController {
 
    @PreAuthorize("permitAll()")
    @GetMapping("")
+   @RequestMapping(path = "/")
     public List<Category> getAll()
     {
-        // find and return all categories
-        return null;
+        List<Category> categories = categoryDao.getAllCategories();
+        return categories;
     }
 
-    // add the appropriate annotation for a get action
+   @RequestMapping(path = "/{categoryId}",method = RequestMethod.GET)
     public Category getById(@PathVariable int id)
     {
-        // get the category by id
-        return null;
+        return categoryDao.getById(id);
     }
 
     // the url to return all products in category 1 would look like this
     // https://localhost:8080/categories/1/products
     @GetMapping("{categoryId}/products")
+    @RequestMapping(path = "{categoryId}/products")
     public List<Product> getProductsById(@PathVariable int categoryId)
     {
-        // get a list of product by categoryId
-        return null;
+      List<Product>products = productDao.listByCategoryId(categoryId);
+        return products;
     }
 
-    // add annotation to call this method for a POST action
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("admin")
     public Category addCategory(@RequestBody Category category)
     {
-        // insert the category
-        return null;
+
+        return categoryDao.getById(category);
     }
 
-    // add annotation to call this method for a PUT (update) action - the url path must include the categoryId
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("admin")
     public void updateCategory(@PathVariable int id, @RequestBody Category category)
@@ -66,7 +65,6 @@ public class CategoriesController {
     }
 
 
-    // add annotation to call this method for a DELETE action - the url path must include the categoryId
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("admin")
     public void deleteCategory(@PathVariable int id)
