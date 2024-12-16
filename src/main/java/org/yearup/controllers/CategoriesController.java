@@ -1,8 +1,11 @@
 package org.yearup.controllers;
 
+import org.apache.ibatis.annotations.Update;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.yearup.data.CategoryDao;
 import org.yearup.data.ProductDao;
 import org.yearup.models.Category;
@@ -11,8 +14,8 @@ import org.yearup.models.Product;
 import java.util.List;
 
 @RestController
+@RequestMapping("categories")
 @CrossOrigin
-@RequestMapping(path = "/categories")
 public class CategoriesController {
 
     private final CategoryDao categoryDao;
@@ -26,49 +29,90 @@ public class CategoriesController {
 
    @PreAuthorize("permitAll()")
    @GetMapping("")
-   @RequestMapping(path = "/")
     public List<Category> getAll()
     {
-        List<Category> categories = categoryDao.getAllCategories();
-        return categories;
+        try {
+            List<Category> categories = categoryDao.getAllCategories();
+            return categories;
+
+        }catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"Notice!... our mistake!");
+        }
     }
 
-   @RequestMapping(path = "/{categoryId}",method = RequestMethod.GET)
+   @GetMapping("{id}")
+   @PreAuthorize("permitAll()")
     public Category getById(@PathVariable int id)
     {
-        return categoryDao.getById(id);
+        try {
+            return categoryDao.getById(id);
+        }catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"Notice!... our mistake!");
+        }
+
     }
 
     // the url to return all products in category 1 would look like this
     // https://localhost:8080/categories/1/products
     @GetMapping("{categoryId}/products")
-    @RequestMapping(path = "{categoryId}/products")
+    @PreAuthorize("permitAll()")
     public List<Product> getProductsById(@PathVariable int categoryId)
     {
-      List<Product>products = productDao.listByCategoryId(categoryId);
-        return products;
+        try {
+            List<Product> products = productDao.listByCategoryId(categoryId);
+            return products;
+        }catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"Notice!... our mistake!");
+        }
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("admin")
+    @PostMapping("")
+    @ResponseStatus(HttpStatus.CREATED)
     public Category addCategory(@RequestBody Category category)
     {
+        try
+        {
+            return categoryDao.create(category);
+        }
+        catch(Exception ex)
+        {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Notice!... our mistake!");
+        }
 
-        return categoryDao.getById(category);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("admin")
+    @PutMapping("{id}")
     public void updateCategory(@PathVariable int id, @RequestBody Category category)
     {
-        // update the category by id
+        try {
+            categoryDao.create(category);
+        }catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Notice!... our mistake!");
+
+        }
+
     }
 
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("admin")
+    @DeleteMapping("{id}")
     public void deleteCategory(@PathVariable int id)
     {
-        // delete the category by id
+
+        try
+        {
+            var category =  categoryDao.getById(id);
+
+            if(category == null)
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+            categoryDao.delete(id);
+        }
+        catch(Exception ex)
+        {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops... our bad.");
+        }
     }
 }
