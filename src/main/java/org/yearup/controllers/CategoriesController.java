@@ -2,6 +2,7 @@ package org.yearup.controllers;
 
 import org.apache.ibatis.annotations.Update;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,7 @@ import org.yearup.data.ProductDao;
 import org.yearup.models.Category;
 import org.yearup.models.Product;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -28,12 +30,13 @@ public class CategoriesController {
         this.productDao = productDao;
     }
 
-   @PreAuthorize("permitAll()")
    @GetMapping("")
+   @PreAuthorize("permitAll()")
     public List<Category> getAll()
     {
         try {
             List<Category> categories = categoryDao.getAllCategories();
+
             return categories;
 
         }catch (Exception e){
@@ -45,11 +48,17 @@ public class CategoriesController {
    @PreAuthorize("permitAll()")
     public Category getById(@PathVariable int id)
     {
+        Category category = null;
         try {
-            return categoryDao.getById(id);
+            category = categoryDao.getById(id);
         }catch (Exception e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"Notice!... our mistake!");
         }
+        if (category == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Notice!... our mistake!");
+
+        }
+        return category;
 
     }
 
@@ -83,15 +92,11 @@ public class CategoriesController {
     @ResponseStatus(HttpStatus.CREATED)
     public Category addCategory(@RequestBody Category category)
     {
-        try
-        {
-            return categoryDao.create(category);
-        }
-        catch(Exception ex)
-        {
+        try {
+           return  categoryDao.create(category);
+        } catch(Exception ex) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Notice!... our mistake!");
         }
-
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -109,19 +114,16 @@ public class CategoriesController {
     // Projected URL: https://localhost:8080/categories/{id}
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("{id}")
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+  @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteCategory(@PathVariable int id)
     {
-        try
-        {
-            var category =  categoryDao.getById(id);
-
-            if(category == null)
-                throw new ResponseStatusException(HttpStatus.NO_CONTENT);
-
+        try {
+            var product = categoryDao.getById(id);
+            if (product == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             categoryDao.delete(id);
-        } catch(Exception ex) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops... our bad!");
+        }catch (Exception e){
+
         }
+
     }
 }
