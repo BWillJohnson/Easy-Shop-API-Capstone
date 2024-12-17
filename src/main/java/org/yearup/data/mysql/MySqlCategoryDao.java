@@ -38,7 +38,7 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
     @Override
     public Category getById(int categoryId)
     {
-        String searchById = "SELECT category_id, name FROM categories WHERE category_id = ?";
+        String searchById = "SELECT * FROM categories WHERE category_id = ?";
      try(Connection connect = getConnection();
      PreparedStatement searchByIdStatement = connect.prepareStatement(searchById)) {
 
@@ -46,8 +46,7 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
 
          try (ResultSet results = searchByIdStatement.executeQuery()){
              if (results.next()){
-                 Category category = mapRow(results);
-                 return category;
+                 return mapRow(results);
              }
 
          }
@@ -61,7 +60,7 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
     @Override
     public Category create(Category category)
     {
-        String createCategoryQuery = "INSERT INTO Categories(name, description )";
+        String createCategoryQuery = "INSERT INTO Categories(name, description ) VALUES (?,?)";
 
         try (Connection connect = getConnection();
         PreparedStatement createStatement = connect.prepareStatement(createCategoryQuery,Statement.RETURN_GENERATED_KEYS)){
