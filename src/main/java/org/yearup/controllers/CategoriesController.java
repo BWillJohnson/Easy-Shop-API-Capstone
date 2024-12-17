@@ -11,6 +11,7 @@ import org.yearup.data.ProductDao;
 import org.yearup.models.Category;
 import org.yearup.models.Product;
 
+import java.sql.SQLException;
 import java.util.List;
 
 @RestController
@@ -56,13 +57,24 @@ public class CategoriesController {
     // https://localhost:8080/categories/1/products
     @GetMapping("{categoryId}/products")
     @PreAuthorize("permitAll()")
+
     public List<Product> getProductsById(@PathVariable int categoryId)
     {
         try {
             List<Product> products = productDao.listByCategoryId(categoryId);
+
+            // If no products are found, throw 404 (Not Found)
+            if (products.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No products found for category ID " + categoryId);
+            }
+
             return products;
-        }catch (Exception e){
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"Notice!... our mistake!");
+        } catch (Exception e) {
+            // Log the exception (using a logger in real-world code)
+            System.err.println("Error fetching products for category " + categoryId + ": " + e.getMessage());
+
+            // Return a 500 Internal Server Error for unexpected issues
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Notice!... our mistake!", e);
         }
     }
 
@@ -87,20 +99,19 @@ public class CategoriesController {
     public void updateCategory(@PathVariable int id, @RequestBody Category category)
     {
         try {
-            categoryDao.create(category);
+            categoryDao.update(id,category);
         }catch (Exception e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Notice!... our mistake!");
 
         }
 
     }
-
-
+    // Projected URL: https://localhost:8080/categories/{id}
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("{id}")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteCategory(@PathVariable int id)
     {
-
         try
         {
             var category =  categoryDao.getById(id);
@@ -109,10 +120,8 @@ public class CategoriesController {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 
             categoryDao.delete(id);
-        }
-        catch(Exception ex)
-        {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops... our bad.");
+        } catch(Exception ex) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops... our bad!");
         }
     }
 }

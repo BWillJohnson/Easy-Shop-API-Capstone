@@ -1,5 +1,6 @@
 package org.yearup.data.mysql;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.yearup.data.CategoryDao;
 import org.yearup.models.Category;
@@ -10,10 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
-{
-    public MySqlCategoryDao(DataSource dataSource)
-    {
+public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao {
+
+    @Autowired
+    public MySqlCategoryDao(DataSource dataSource) {
         super(dataSource);
     }
 
@@ -25,86 +26,79 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
         try (Connection connect = getConnection();
              PreparedStatement statement = connect.prepareStatement(selectSql);
              ResultSet results = statement.executeQuery()) {
-            while (results.next()){
+            while (results.next()) {
                 categories.add(mapRow(results));
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return categories;
     }
 
     @Override
-    public Category getById(int categoryId)
-    {
+    public Category getById(int categoryId) {
         String searchById = "SELECT * FROM categories WHERE category_id = ?";
-     try(Connection connect = getConnection();
-     PreparedStatement searchByIdStatement = connect.prepareStatement(searchById)) {
+        try (Connection connect = getConnection();
+             PreparedStatement searchByIdStatement = connect.prepareStatement(searchById)) {
 
-         searchByIdStatement.setInt(1,categoryId);
+            searchByIdStatement.setInt(1, categoryId);
 
-         try (ResultSet results = searchByIdStatement.executeQuery()){
-             if (results.next()){
-                 return mapRow(results);
-             }
-
-         }
-
-     }catch (Exception e){
+            try (ResultSet results = searchByIdStatement.executeQuery()) {
+                if (results.next()) {
+                    return mapRow(results);
+                }
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
-
     @Override
-    public Category create(Category category)
-    {
+    public Category create(Category category) {
         String createCategoryQuery = "INSERT INTO Categories(name, description ) VALUES (?,?)";
 
         try (Connection connect = getConnection();
-        PreparedStatement createStatement = connect.prepareStatement(createCategoryQuery,Statement.RETURN_GENERATED_KEYS)){
+             PreparedStatement createStatement = connect.prepareStatement(createCategoryQuery, Statement.RETURN_GENERATED_KEYS)) {
 
-            createStatement.setString(1,category.getName());
-            createStatement.setString(2,category.getDescription());
+            createStatement.setString(1, category.getName());
+            createStatement.setString(2, category.getDescription());
 
             int rows = createStatement.executeUpdate();
 
-            if (rows == 0){
+            if (rows == 0) {
                 throw new SQLException("Insert failed, No rows affected!");
             }
-
-            try (ResultSet keyGenerator = createStatement.getGeneratedKeys()){
-                if (keyGenerator.next()){
+            try (ResultSet keyGenerator = createStatement.getGeneratedKeys()) {
+                if (keyGenerator.next()) {
                     int generateId = keyGenerator.getInt(1);
                     category.setCategoryId(generateId);
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return category;
     }
-
     @Override
     public void update(int categoryId, Category category) {
         String updateQuery = "UPDATE categories SET name = ?, description = ? WHERE category_id = ?";
-        try(Connection connect  = getConnection();
-        PreparedStatement updateStatement = connect.prepareStatement(updateQuery)) {
+        try (Connection connect = getConnection();
+             PreparedStatement updateStatement = connect.prepareStatement(updateQuery)) {
 
-            updateStatement.setString(1,category.getName());
-            updateStatement.setString(2,category.getDescription());
-            updateStatement.setInt(3,categoryId);
+            updateStatement.setString(1, category.getName());
+            updateStatement.setString(2, category.getDescription());
+            updateStatement.setInt(3, categoryId);
 
             int rows = updateStatement.executeUpdate();
 
             if (rows == 0) {
                 throw new SQLException("Update failed, no rows affected!");
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             System.err.println("!NOTICE!" + "SQL Error!" + e.getMessage());
             e.printStackTrace();
-        }catch (Exception e){
+        } catch (Exception e) {
             System.err.println("!NOTICE! Error" + e.getMessage());
             e.printStackTrace();
         }
@@ -115,35 +109,34 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
         String deletionQuery = "DELETE FROM categories WHERE category_id = ?";
 
         try (Connection connect = getConnection();
-        PreparedStatement deleteStatement = connect.prepareStatement(deletionQuery)){
+             PreparedStatement deleteStatement = connect.prepareStatement(deletionQuery)) {
 
-            deleteStatement.setInt(1,categoryId);
+            deleteStatement.setInt(1, categoryId);
 
             int rows = deleteStatement.executeUpdate();
 
-            if (rows == 0){
-                throw new SQLException("Delete failed, no rows affected!");
+            if (rows == 0) {
+                throw new SQLException("Delete failed!, no rows affected!");
             }
 
-        }catch (SQLException e){
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            System.err.println("!NOTICE! Error" + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    private Category mapRow(ResultSet row) throws SQLException
-    {
+    private Category mapRow(ResultSet row) throws SQLException {
         int categoryId = row.getInt("category_id");
         String name = row.getString("name");
         String description = row.getString("description");
 
-        Category category = new Category()
-        {{
+        Category category = new Category() {{
             setCategoryId(categoryId);
             setName(name);
             setDescription(description);
         }};
-
         return category;
     }
-
 }
