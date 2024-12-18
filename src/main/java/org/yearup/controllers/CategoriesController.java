@@ -1,8 +1,6 @@
 package org.yearup.controllers;
 
-import org.apache.ibatis.annotations.Update;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -12,8 +10,8 @@ import org.yearup.data.ProductDao;
 import org.yearup.models.Category;
 import org.yearup.models.Product;
 
-import java.sql.Connection;
-import java.sql.SQLException;
+
+
 import java.util.List;
 
 @RestController
@@ -62,8 +60,6 @@ public class CategoriesController {
 
     }
 
-    // the url to return all products in category 1 would look like this
-    // https://localhost:8080/categories/1/products
     @GetMapping("{categoryId}/products")
     @PreAuthorize("permitAll()")
 
@@ -72,7 +68,7 @@ public class CategoriesController {
         try {
             List<Product> products = productDao.listByCategoryId(categoryId);
 
-            // If no products are found, throw 404 (Not Found)
+            // If no products are found!
             if (products.isEmpty()) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No products found for category ID " + categoryId);
             }
@@ -107,11 +103,10 @@ public class CategoriesController {
             categoryDao.update(id,category);
         }catch (Exception e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Notice!... our mistake!");
-
         }
 
     }
-    // Projected URL: https://localhost:8080/categories/{id}
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("{id}")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
@@ -122,8 +117,7 @@ public class CategoriesController {
             if (product == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             categoryDao.delete(id);
         }catch (Exception e){
-
+            e.printStackTrace();
         }
-
     }
 }
