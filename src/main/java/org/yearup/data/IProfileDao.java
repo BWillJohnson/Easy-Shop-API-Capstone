@@ -3,7 +3,7 @@ package org.yearup.data;
 
 import org.yearup.models.Profile;
 
-public interface ProfileDao
+public interface IProfileDao
 {
     Profile create(Profile profile);
 }

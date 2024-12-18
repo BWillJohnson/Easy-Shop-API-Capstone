@@ -2,7 +2,7 @@ package org.yearup.data.mysql;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.yearup.data.UserDao;
+import org.yearup.data.IUserDao;
 import org.yearup.models.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class MySqlUserDao extends MySqlDaoBase implements UserDao
+public class MySqlUserDao extends MySqlDaoBase implements IUserDao
 {
     @Autowired
     public MySqlUserDao(DataSource dataSource)

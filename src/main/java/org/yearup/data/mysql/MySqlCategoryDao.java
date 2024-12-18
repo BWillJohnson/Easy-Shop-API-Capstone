@@ -2,7 +2,7 @@ package org.yearup.data.mysql;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.yearup.data.CategoryDao;
+import org.yearup.data.ICategoryDao;
 import org.yearup.models.Category;
 
 import javax.sql.DataSource;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao {
+public class MySqlCategoryDao extends MySqlDaoBase implements ICategoryDao {
 
     @Autowired
     public MySqlCategoryDao(DataSource dataSource) {

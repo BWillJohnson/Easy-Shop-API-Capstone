@@ -5,8 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import org.yearup.data.CategoryDao;
-import org.yearup.data.ProductDao;
+import org.yearup.data.ICategoryDao;
+import org.yearup.data.IProductDao;
 import org.yearup.models.Category;
 import org.yearup.models.Product;
 
@@ -19,11 +19,11 @@ import java.util.List;
 @CrossOrigin
 public class CategoriesController {
 
-    private final CategoryDao categoryDao;
+    private final ICategoryDao categoryDao;
 
-    private final ProductDao productDao;
+    private final IProductDao productDao;
      @Autowired
-    public CategoriesController(CategoryDao categoryDao, ProductDao productDao) {
+    public CategoriesController(ICategoryDao categoryDao, IProductDao productDao) {
         this.categoryDao = categoryDao;
         this.productDao = productDao;
     }
