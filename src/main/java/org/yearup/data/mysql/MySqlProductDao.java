@@ -12,17 +12,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class MySqlProductDao extends MySqlDaoBase implements IProductDao
-{
+public class MySqlProductDao extends MySqlDaoBase implements IProductDao {
     @Autowired
-    public MySqlProductDao(DataSource dataSource)
-    {
+    public MySqlProductDao(DataSource dataSource) {
         super(dataSource);
     }
 
     @Override
-    public List<Product> search(Integer categoryId, BigDecimal minPrice, BigDecimal maxPrice, String color)
-    {
+    public List<Product> search(Integer categoryId, BigDecimal minPrice, BigDecimal maxPrice, String color) {
         List<Product> products = new ArrayList<>();
 
         String sql = "SELECT * FROM products " +
@@ -30,34 +27,30 @@ public class MySqlProductDao extends MySqlDaoBase implements IProductDao
                 "   AND (price >= ? OR ? = -1) " +
                 " AND (price <= ? OR ? = -1) " +
                 "   AND (color = ? OR ? = '') " +
-                    "ORDER BY price ASC";
+                "ORDER BY price ASC";
 
         categoryId = categoryId == null ? -1 : categoryId;
         minPrice = minPrice == null ? new BigDecimal("-1") : minPrice;
         maxPrice = maxPrice == null ? new BigDecimal("-1") : maxPrice;
         color = color == null ? "" : color;
 
-        try (Connection connection = getConnection())
-        {
+        try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, categoryId);
             statement.setInt(2, categoryId);
             statement.setBigDecimal(3, minPrice);
             statement.setBigDecimal(4, minPrice);
-            statement.setBigDecimal(5,maxPrice);
-            statement.setBigDecimal(6,maxPrice);
+            statement.setBigDecimal(5, maxPrice);
+            statement.setBigDecimal(6, maxPrice);
             statement.setString(7, color);
             statement.setString(8, color);
 
             ResultSet row = statement.executeQuery();
 
-            while (row.next())
-            {
+            while (row.next()) {
                 products.add(mapRow(row));
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
@@ -65,27 +58,22 @@ public class MySqlProductDao extends MySqlDaoBase implements IProductDao
     }
 
     @Override
-    public List<Product> listByCategoryId(int categoryId)
-    {
+    public List<Product> listByCategoryId(int categoryId) {
         List<Product> products = new ArrayList<>();
 
         String sql = "SELECT * FROM products " +
-                    " WHERE category_id = ? ";
+                " WHERE category_id = ? ";
 
-        try (Connection connection = getConnection())
-        {
+        try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, categoryId);
 
             ResultSet row = statement.executeQuery();
 
-            while (row.next())
-            {
+            while (row.next()) {
                 products.add(mapRow(row));
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
@@ -94,36 +82,29 @@ public class MySqlProductDao extends MySqlDaoBase implements IProductDao
 
 
     @Override
-    public Product getById(int productId)
-    {
+    public Product getById(int productId) {
         String sql = "SELECT * FROM products WHERE product_id = ?";
-        try (Connection connection = getConnection())
-        {
+        try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, productId);
 
             ResultSet row = statement.executeQuery();
-            if (row.next())
-            {
+            if (row.next()) {
                 return mapRow(row);
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return null;
     }
 
     @Override
-    public Product create(Product product)
-    {
+    public Product create(Product product) {
 
         String sql = "INSERT INTO products(name, price, category_id, description, color, image_url, stock, featured) " +
                 " VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
 
-        try (Connection connection = getConnection())
-        {
+        try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
             statement.setString(1, product.getName());
             statement.setBigDecimal(2, product.getPrice());
@@ -148,17 +129,14 @@ public class MySqlProductDao extends MySqlDaoBase implements IProductDao
                     return getById(orderId);
                 }
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return null;
     }
 
     @Override
-    public void update(int productId, Product product)
-    {
+    public void update(int productId, Product product) {
         String sql = "UPDATE products" +
                 " SET name = ? " +
                 "   , price = ? " +
@@ -170,8 +148,7 @@ public class MySqlProductDao extends MySqlDaoBase implements IProductDao
                 "   , featured = ? " +
                 " WHERE product_id = ?;";
 
-        try (Connection connection = getConnection())
-        {
+        try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, product.getName());
             statement.setBigDecimal(2, product.getPrice());
@@ -184,45 +161,38 @@ public class MySqlProductDao extends MySqlDaoBase implements IProductDao
             statement.setInt(9, productId);
 
             statement.executeUpdate();
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
-
+    // Bug i fixed my Delete was doing statment.ex
     @Override
-    public void delete(int productId)
-    {
+    public void delete(int productId) {
 
         String sql = "DELETE FROM products " +
                 " WHERE product_id = ?;";
 
-        try (Connection connection = getConnection())
-        {
+        try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, productId);
 
             statement.executeUpdate();
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    //I am Implementing a Builder Pattern to make my helper method look clearer and concise.
-    protected static Product mapRow(ResultSet row) throws SQLException {
-     return new Product(row.getInt("productId"),
-             row.getString("name"),
-             row.getBigDecimal("price"),
-             row.getInt("categoryId"),
-             row.getString("description"),
-             row.getString("color"),
-             row.getInt("stock"),
-             row.getBoolean("isFeatured"),
-             row.getString("imageUrl")
-     );
 
+    protected static Product mapRow(ResultSet row) throws SQLException {
+        int productId = row.getInt("product_id");
+        String name = row.getString("name");
+        BigDecimal price = row.getBigDecimal("price");
+        int categoryId = row.getInt("category_id");
+        String description = row.getString("description");
+        String color = row.getString("color");
+        int stock = row.getInt("stock");
+        boolean isFeatured = row.getBoolean("featured");
+        String imageUrl = row.getString("image_url");
+        return new Product(productId, name, price, categoryId, description, color, stock, isFeatured, imageUrl);
     }
 }
