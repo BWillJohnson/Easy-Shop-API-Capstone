@@ -1,5 +1,6 @@
 package org.yearup.data.mysql;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.yearup.models.Product;
 import org.yearup.data.IProductDao;
@@ -13,6 +14,7 @@ import java.util.List;
 @Component
 public class MySqlProductDao extends MySqlDaoBase implements IProductDao
 {
+    @Autowired
     public MySqlProductDao(DataSource dataSource)
     {
         super(dataSource);
@@ -209,18 +211,18 @@ public class MySqlProductDao extends MySqlDaoBase implements IProductDao
         }
     }
 
-    protected static Product mapRow(ResultSet row) throws SQLException
-    {
-        int productId = row.getInt("product_id");
-        String name = row.getString("name");
-        BigDecimal price = row.getBigDecimal("price");
-        int categoryId = row.getInt("category_id");
-        String description = row.getString("description");
-        String color = row.getString("color");
-        int stock = row.getInt("stock");
-        boolean isFeatured = row.getBoolean("featured");
-        String imageUrl = row.getString("image_url");
+    //I am Implementing a Builder Pattern to make my helper method look clearer and concise.
+    protected static Product mapRow(ResultSet row) throws SQLException {
+     return new Product(row.getInt("productId"),
+             row.getString("name"),
+             row.getBigDecimal("price"),
+             row.getInt("categoryId"),
+             row.getString("description"),
+             row.getString("color"),
+             row.getInt("stock"),
+             row.getBoolean("isFeatured"),
+             row.getString("imageUrl")
+     );
 
-        return new Product(productId, name, price, categoryId, description, color, stock, isFeatured, imageUrl);
     }
 }

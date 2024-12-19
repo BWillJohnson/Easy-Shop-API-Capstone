@@ -126,17 +126,11 @@ public class MySqlCategoryDao extends MySqlDaoBase implements ICategoryDao {
             e.printStackTrace();
         }
     }
-
-    private Category mapRow(ResultSet row) throws SQLException {
-        int categoryId = row.getInt("category_id");
-        String name = row.getString("name");
-        String description = row.getString("description");
-
-        Category category = new Category() {{
-            setCategoryId(categoryId);
-            setName(name);
-            setDescription(description);
-        }};
-        return category;
+    //I am Implementing a Builder Pattern to make my helper method look clearer and concise.
+    protected static Category mapRow(ResultSet row) throws SQLException {
+        return new Category(row.getInt("category_id"),
+                row.getString("name"),
+                row.getString("description")
+        );
     }
 }
