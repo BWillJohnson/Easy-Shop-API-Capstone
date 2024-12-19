@@ -62,7 +62,6 @@ public class CategoriesController {
 
     @GetMapping("{categoryId}/products")
     @PreAuthorize("permitAll()")
-
     public List<Product> getProductsById(@PathVariable int categoryId)
     {
         try {

@@ -5,15 +5,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.yearup.data.IShoppingCartDao;
 import org.yearup.models.ShoppingCart;
+import org.yearup.models.ShoppingCartItem;
 
 import javax.sql.DataSource;
 import java.util.List;
+import java.util.Map;
+
 //@Component
 //public class ShoppingCartDao extends MySqlDaoBase implements IShoppingCartDao {
-//    @Autowired
-//    public ShoppingCartDao(DataSource dataSource) {
-//        super(dataSource);
-//    }
+//private Map<Integer, ShoppingCartItem> items
+//
 //
 //    @Override
 //    public ShoppingCart getByUserId(int userId) {
@@ -21,12 +22,12 @@ import java.util.List;
 //    }
 //
 //    @Override
-//    public List<ShoppingCart> wholeCartList() {
+//    public List<ShoppingCart> wholeCartList(int productId, int quantity) {
 //        return null;
 //    }
 //
 //    @Override
-//    public ShoppingCart addToCart(ShoppingCart cart) {
+//    public ShoppingCart addToCart(int productId) {
 //        return null;
 //    }
 //
