@@ -6,7 +6,7 @@ This project is to show how I am implementing the REST standards into EasyShop A
 ## Description of the Project
 This API is the next generation of online shopping! Designed for both industries and personal use, it offers fast loading and seamless filtering for an efficient and smooth shopping experience.
 
-![img.png](src/main/java/org/yearup/img.png), ![img_1.png](src/main/java/org/yearup/img_1.png), ![img_2.png](src/main/java/org/yearup/img_2.png),![img_3.png](src/main/java/org/yearup/img_3.png),![img_4.png](src/main/java/org/yearup/img_4.png),![img_5.png](src/main/java/org/yearup/img_5.png)
+![img.png](src/main/java/org/yearup/img.png), ![img_1.png](src/main/java/org/yearup/img_1.png), ![img_2.png](src/main/java/org/yearup/img_2.png),![img_3.png](src/main/java/org/yearup/img_3.png),![img_4.png](src/main/java/org/yearup/img_4.png),![img_5.png](src/main/java/org/yearup/img_5.png),![img.png](img.png)
 
 ## User Stories
 - As a developer, I want to implement a structured organized Categories Controller.
