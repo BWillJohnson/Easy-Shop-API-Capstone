@@ -105,7 +105,7 @@ public class CategoriesController {
         }
 
     }
-    // This bug made
+    // This bug made was made by me it took me two days to re-think about my logic. ex- I did categoryDao.create(id)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("{id}")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
