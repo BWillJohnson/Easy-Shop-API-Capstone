@@ -4,7 +4,8 @@ Hello here is a brief description of my EasyShop API: Imagine an online store wi
 This project is to show how I am implementing the REST standards into EasyShop Application.
 
 ## Description of the Project
-This API is the next generation of online shopping! Designed for both industries and personal use, it offers fast loading and seamless filtering for an efficient and smooth shopping experience.
+This API is the next generation of online shopping! Designed for both industries and personal use,
+it offers fast loading and seamless filtering for an efficient and smooth shopping experience. gives the Admin control of Inserting, Updating, Deleting. With authentication being used to truly use the web application.
 
 ![img.png](src/main/java/org/yearup/img.png), ![img_1.png](src/main/java/org/yearup/img_1.png), ![img_2.png](src/main/java/org/yearup/img_2.png),![img_3.png](src/main/java/org/yearup/img_3.png),![img_4.png](src/main/java/org/yearup/img_4.png),![img_5.png](src/main/java/org/yearup/img_5.png),![img.png](img.png)
 
