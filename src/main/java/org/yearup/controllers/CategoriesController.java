@@ -105,7 +105,7 @@ public class CategoriesController {
         }
 
     }
-
+    // This bug made
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("{id}")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)

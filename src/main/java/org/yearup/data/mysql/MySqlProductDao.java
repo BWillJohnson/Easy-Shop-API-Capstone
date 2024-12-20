@@ -165,7 +165,7 @@ public class MySqlProductDao extends MySqlDaoBase implements IProductDao {
             throw new RuntimeException(e);
         }
     }
-    // Bug i fixed my Delete was doing statment.ex
+
     @Override
     public void delete(int productId) {
 
