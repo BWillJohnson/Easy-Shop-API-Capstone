@@ -25,6 +25,7 @@ Instructions on how to set up and run the project using IntelliJ IDEA.
 
 - IntelliJ IDEA: Ensure you have IntelliJ IDEA installed, which you can download from [here](https://www.jetbrains.com/idea/download/).
 - Java SDK: Make sure Java SDK is installed and configured in IntelliJ.
+- Mysql : Make sure it is up-to-date, and connected to your Intellij project.
 
 ### Running the Application in IntelliJ
 
@@ -35,6 +36,9 @@ Follow these steps to get your application running within IntelliJ IDEA:
 3. After the project opens, wait for IntelliJ to index the files and set up the project.
 4. Find the main class with the `public static void main(String[] args)` method.
 5. Right-click on the file and select 'Run 'YourMainClassName.main()'' to start the application.
+6. Rerun and refresh the SQL database
+7. Check postman and ensure you are all green.
+8. Then jump into the client web application and run this through Scary Google Chrome.
 
 ## Technologies Used
 
@@ -47,8 +51,9 @@ Follow these steps to get your application running within IntelliJ IDEA:
 
 Outline potential future enhancements or functionalities you might consider adding:
 
-- Additional feature to be developed.
-- Improvement of current functionalities.
+- Improve a friendly user experience.
+- Take on the frontend and improve fonts and features with in website.
+- implement A receipt builder into backend.
 
 ## Resources
 
